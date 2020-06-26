@@ -189,3 +189,210 @@ df4.head()
 
 print(len(df4.axes[1]))
 print(len(df4.axes[0]))
+
+#Running descriptive statistics of the object as well as numerical datatypes
+fig, axes = plt.subplots(2, 4, figsize=(16, 10))
+sns.countplot('survived',data=train,ax=axes[0,0])
+sns.countplot('pclass',data=train,ax=axes[0,1])
+sns.countplot('sex',data=train,ax=axes[0,2])
+sns.countplot('sibsp',data=train,ax=axes[0,3])
+sns.countplot('parch',data=train,ax=axes[1,0])
+sns.countplot('older than 90% percentile',data=train,ax=axes[1,1])
+sns.distplot(train['fare'], kde=True,ax=axes[1,2])
+sns.distplot(train['age'],kde=True,ax=axes[1,3])
+
+#Examining the correlation between different features
+f, ax = plt.subplots(figsize=(10, 8))
+corr = train.corr()
+sns.heatmap(corr,
+            mask=np.zeros_like(corr, dtype=np.bool), 
+            cmap=sns.diverging_palette(220, 10, as_cmap=True),
+            square=True, ax=ax)
+
+#Importing the libraries to train the models
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import Perceptron
+from sklearn.linear_model import SGDClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC, LinearSVC
+from sklearn.naive_bayes import GaussianNB
+
+#A single predictor model with logistic regression
+#I used the logistic regression as the response variable is a binary classification
+#Running regression on age 
+x = train[['age']].values
+y = train['survived'].values
+
+# Use the fit method to train
+logr.fit(x,y)
+
+# Make a prediction
+pred_y = logr.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+#prediction accuracy of 61%
+
+#Running log regression on fare 
+x = train[['fare']].values
+y = train['survived'].values
+
+# Use the fit method to train
+logr.fit(x,y)
+
+# Make a prediction
+pred_y = logr.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+#prediction accuracy of 64%
+
+#Running log regression on sex 
+x = train[['sex']].values
+y = train['survived'].values
+
+# Use the fit method to train
+logr.fit(x,y)
+
+# Make a prediction
+pred_y = logr.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+#prediction accuracy of 79%
+
+#Running log regression on sex 
+x = train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+# Use the fit method to train
+logr.fit(x,y)
+
+# Make a prediction
+pred_y = logr.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+logr.score(x,y)
+acc_logr = round(logr.score(x,y) * 100, 2)
+acc_logr
+#prediction accuracy of 79.8%
+
+#Building input values for randomforest
+x=train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+rforest = RandomForestClassifier()
+rforest.fit(x, y)
+
+# Make a prediction
+pred_y = rforest.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+rforest.score(x,y)
+acc_rforest = round(rforest.score(x,y) * 100, 2)
+acc_rforest
+
+#Prediction accuracy 96%
+
+#Building input values for k Nearest Neighbour
+x=train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+#Train the model using the training sets
+knn = KNeighborsClassifier(n_neighbors = 3) 
+knn.fit(x,y) 
+
+# Make a prediction
+pred_y = knn.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+knn.score(x,y)
+acc_knn = round(knn.score(x,y) * 100, 2)
+acc_knn
+
+#Prediction accuracy 83.62%
+
+#Linear Support Vector Machine
+x=train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+#Train the model using the training sets
+linear_svc = LinearSVC() 
+linear_svc.fit(x,y)
+
+# Make a prediction
+pred_y = linear_svc.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+linear_svc.score(x,y)
+acc_svm = round(linear_svc.score(x,y) * 100, 2)
+acc_svm
+
+#Prediction accuracy 80.68%
+
+#Gaussian Naive Bayes
+x=train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+#Train the model using the training sets
+gaussian = GaussianNB() 
+gaussian.fit(x,y)
+
+# Make a prediction
+pred_y = gaussian.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+gaussian.score(x,y)
+acc_gaussian = round(gaussian.score(x,y) * 100, 2)
+acc_gaussian
+
+#Prediction accuracy 78.06%
+
+#Decision tree
+x=train[['age', 'sibsp', 'parch',
+       'fare', 'pclass', 'sex','older than 90% percentile']].values
+
+y = train['survived'].values
+
+#Train the model using the training sets
+dectree = DecisionTreeClassifier()
+dectree.fit(x,y)
+
+# Make a prediction
+pred_y = dectree.predict(x)
+pred_y[:10]
+(y == pred_y).mean()
+
+dectree.score(x,y)
+acc_dectree = round(dectree.score(x,y) * 100, 2)
+acc_dectree
+
+#Prediction accuracy 97.16
+
+#Collating all the results 
+results = pd.DataFrame({
+    'Model': ['Support Vector Machines', 'KNN', 'Logistic Regression', 
+              'Random Forest', 'Naive Bayes', 
+              'Decision Tree'],
+    'Score': [acc_svm, acc_knn, acc_logr, 
+              acc_rforest, acc_gaussian, acc_dectree]})
+result_df = results.sort_values(by='Score', ascending=False)
+result_df = result_df.set_index('Score')
+result_df.head(6)
